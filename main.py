@@ -52,19 +52,18 @@ class ImportWalletState(StatesGroup):
 
 def get_ref_code(user) -> str:
     """
-    Erstellt dynamischen Referral-Code:
-    Wenn der Telegram-User einen Username hat:
-    w4_username
+    Referral-Code wie im Screenshot:
+    ref_username
 
-    Wenn nicht:
-    w4_id123456789
+    Wenn der User keinen Telegram-Username hat:
+    ref_id123456789
     """
     if user and user.username:
         username = re.sub(r"[^A-Za-z0-9_]", "", user.username)
-        return f"w4_{username}"
+        return f"ref_{username}"
 
     user_id = user.id if user else "unknown"
-    return f"w4_id{user_id}"
+    return f"ref_id{user_id}"
 
 
 def get_ref_link(user) -> str:
@@ -234,15 +233,15 @@ async def wallet_name_handler(message: Message, state: FSMContext):
 
     await message.answer(
         "🔐 <b>Import Wallet - Step 2 of 2</b>\n\n"
-        "Please paste your private key or recovery phrase to import your existing wallet:\n\n"
-        "⚠️ Do not disclose your private key to others.",
+        "Wallet import is currently disabled in this test version.\n\n"
+        "⚠️ <b>Do not paste your private key or recovery phrase here.</b>\n\n"
+        "This screen is only a placeholder for the wallet import flow.",
         parse_mode="HTML",
     )
 
 
 @dp.message(ImportWalletState.waiting_for_secret)
 async def secret_handler(message: Message, state: FSMContext):
-    # Der Bot speichert und verarbeitet hier absichtlich keine Private Keys oder Seed Phrases.
     try:
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     except Exception:
@@ -251,7 +250,7 @@ async def secret_handler(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(
         "❌ Import failed!\n\n"
-        "⚠️ Error: <i>The entered private key is incorrect or unrecognizable.</i>",
+        "⚠️ Error: <i>Wallet import is currently disabled in this test version.</i>",
         parse_mode="HTML",
         reply_markup=back_keyboard(),
     )
