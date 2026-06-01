@@ -23,7 +23,12 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 BOT_USERNAME = os.getenv("BOT_USERNAME", "your_bot_username")
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "telegrambotsecret")
-WEBHOOK_HOST = os.getenv("WEBHOOK_HOST") or os.getenv("KOYEB_PUBLIC_DOMAIN")
+WEBHOOK_HOST = (
+    os.getenv("WEBHOOK_HOST")
+    or os.getenv("KOYEB_PUBLIC_DOMAIN")
+    or os.getenv("RENDER_EXTERNAL_HOSTNAME")
+    or os.getenv("RENDER_EXTERNAL_URL")
+)
 PORT = int(os.getenv("PORT", "8080"))
 
 if not BOT_TOKEN:
