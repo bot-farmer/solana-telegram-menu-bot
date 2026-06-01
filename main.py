@@ -53,86 +53,174 @@ class ImportWalletState(StatesGroup):
     waiting_for_secret = State()
 
 
+BASE_TEXT = {
+    "btn_start_trading": "🚀 Start Trading",
+    "btn_wallet": "👜 Wallet",
+    "btn_import": "📥 Import",
+    "btn_portfolio": "📈 My Portfolio",
+    "btn_limit": "🎯 Limit Orders",
+    "btn_copy": "🤝 Copy Trading",
+    "btn_refer": "🎉 Invite & Earn",
+    "btn_settings": "⚙️ Settings",
+    "btn_language": "🌐 Language",
+    "btn_help": "❓ Help",
+    "btn_back": "⬅️ Back to Menu",
+
+    "wallet": "Wallet",
+    "address": "Address",
+    "balance": "Balance",
+    "referral": "Referral",
+    "invite": "Invite friends and earn rewards",
+    "getting_started": "Getting Started",
+    "send_token": "Send a token contract address to begin trading instantly.",
+    "follow": "Follow official accounts for updates and support.",
+
+    "solana": "Solana",
+    "unknown_token": "Unknown Token",
+    "dex": "DEX",
+    "market_cap": "Market Cap",
+    "price": "Price",
+    "liquidity": "Liquidity",
+    "tax": "Tax",
+    "no_wallet": "You haven't set up a wallet yet",
+    "access_details": "To access token details, please import your wallet first",
+    "enter_contract": "Please enter the token contract address:",
+
+    "step1": (
+        "🔐 <b>Import Wallet - Step 1 of 2</b>\n\n"
+        "What would you like to name this wallet?\n\n"
+        "Letters and numbers only.\n"
+        "<i>For example: \"MainWallet\" or \"Wallet123\".</i>"
+    ),
+    "invalid_wallet_name": (
+        "⚠️ Please use letters and numbers only.\n"
+        "Example: \"MainWallet\" or \"Wallet123\"."
+    ),
+    "step2": (
+        "🔐 <b>Import Wallet - Step 2 of 2</b>\n\n"
+        "Wallet import is currently disabled in this test version.\n\n"
+        "⚠️ <b>Do not paste your private key or recovery phrase here.</b>\n\n"
+        "This screen is only a placeholder for the wallet import flow."
+    ),
+    "import_failed": (
+        "❌ Import failed!\n\n"
+        "⚠️ Error: <i>Wallet import is currently disabled in this test version.</i>"
+    ),
+
+    "wallet_required": (
+        "❌ Failed.\n\n"
+        "⚠️ Error: <i>You have no wallets. Please bind a wallet or generate a new one.</i>"
+    ),
+
+    "settings_panel": (
+        "Customize your general settings. Click on ⚙️ Buy or ⚙️ Sell to customize the settings of "
+        "your buys and sells respectively.\n\n"
+        "ℹ️ Global Settings are common to all of your connected wallets. They dictate the settings "
+        "for your manual trades, and serve as default settings for your automated trades.\n"
+        "ℹ️ The settings of your automated trades can be further customized to override your global "
+        "settings through dedicated Signals, Copytrade, and Auto Snipe settings."
+    ),
+    "anti_mev": "Anti-MEV",
+    "degen_mode": "Degen Mode 😈",
+    "buy": "⚙️ Buy",
+    "sell": "⚙️ Sell",
+    "initial_fees": "Initial Includes Fees",
+    "monitor": "Monitor (All Chains)",
+    "wallet_selection": "Wallet Selection (All Chains)",
+    "on": "On",
+    "detailed": "Detailed",
+    "single": "Single",
+
+    "limit_orders_text": (
+        "Add orders based on specified prices or percentage changes. Bot will automatically trigger "
+        "buy or sell actions, facilitating take profit and stop loss\n\n"
+        "✅The trigger price of the limit order and the actual initiation price have a 1% tolerance. "
+        "The trading mode will follow your selections in the trading panel. Turbo mode is quicker, "
+        "and Anti-MEV mode is safer."
+    ),
+    "refresh": "🔄 Refresh",
+    "existing_orders": "📝 Existing Orders",
+    "add_limit_order": "➕ Add Limit Order",
+
+    "language_title": "Please choose your language:",
+    "language_saved": "✅ Language setting saved.",
+    "language_alert": "Language saved",
+
+    "invite_link": "Invite link",
+    "withdrawable": "Withdrawable",
+    "total_withdrawn": "Total withdrawn",
+    "total_invited": "Total invited",
+    "receiving_address": "Receiving address",
+    "rules": "Rules",
+    "invite_rules": (
+        "1. Earn 25% of invitees' trading fees permanently\n"
+        "2. Withdrawals start from 0.01, max 1 request per 24h. Withdrawals will be auto triggered "
+        "at 8:00 (UTC+8) daily and will be credited within 24 hours after triggering."
+    ),
+
+    "help_intro": (
+        "ℹ️ This section provides an overview of the bot's core functions. For advanced features "
+        "and technical details, please refer to the Developer Documentation, and stay updated "
+        "through the official website and X (Twitter) accounts."
+    ),
+    "trading_guide": "📘 Trading Guide",
+    "system_maintenance": "📗 System & Maintenance",
+    "wallet_operations": "📙 Wallet Operations",
+
+    "trading_guide_text": (
+        "📘 <b>Trading Guide</b>\n\n"
+        "⚡ <b>Start Multi-Chain Trading</b>\n"
+        "Simply send a token contract address in the chat to perform quick buy, snipe, limit order, "
+        "or copy trading actions.\n\n"
+        "📊 <b>Check Holdings After Buying</b>\n"
+        "Send /trades to view your last 20 trades and real-time holdings.\n"
+        "Use /asset to access long-term data.\n\n"
+        "💱 <b>Tokens You Can Trade</b>\n"
+        "You can trade most tokens available across different pools.\n"
+        "Note: ORCA pool pairs are not supported.\n\n"
+        "💰 <b>Trading Fees</b>\n"
+        "A 1% fee applies to both buy and sell orders.\n\n"
+        "🚀 <b>Reached Sniping Limit?</b>\n"
+        "Once the sniping limit is reached, no further snipes can be executed. You'll need to place "
+        "a manual buy when the market opens."
+    ),
+
+    "system_text": (
+        "📗 <b>System & Maintenance</b>\n\n"
+        "⚙️ <b>Bot Lagging?</b>\n"
+        "Switch to another bot instance if delays occur. Avoid using overloaded instances, "
+        "as they may cause response delays.\n\n"
+        "🧩 <b>Version Check</b>\n"
+        "If you encounter repeated errors during trading or wallet import/export, please verify "
+        "that you are using the latest bot version. Older versions may not be supported.\n\n"
+        "🔒 <b>Official Verification</b>\n"
+        "Only access the bot through official website or verified links. Using links from other "
+        "sources may expose you to phishing or scam bots."
+    ),
+
+    "wallet_operations_text": (
+        "📙 <b>Wallet Operations</b>\n\n"
+        "💼 <b>Wallet Management</b>\n"
+        "You are fully responsible for managing your private keys and wallet addresses. "
+        "This bot does not store any private keys, mnemonic phrases, or wallet activity logs.\n\n"
+        "🔑 <b>Import Wallet</b>\n"
+        "Choose the correct format for the blockchain you wish to trade on.\n"
+        "• A private key grants full control over your wallet.\n"
+        "• A mnemonic phrase is a sequence of 12–24 words used to generate and back up private keys.\n\n"
+        "🪄 <b>Create Wallet</b>\n"
+        "If you cannot import a wallet or do not have an existing one, use the Create Wallet feature.\n\n"
+        "💸 <b>Withdraw Tokens</b>\n"
+        "Send /wallets, select Withdraw, and enter the amount and destination address."
+    ),
+
+    "unknown_feature": "This feature is not available yet.",
+}
+
+
 TRANSLATIONS = {
-    "en": {
-        "btn_start_trading": "🚀 Start Trading",
-        "btn_wallet": "👜 Wallet",
-        "btn_import": "📥 Import",
-        "btn_portfolio": "📈 My Portfolio",
-        "btn_limit": "🎯 Limit Orders",
-        "btn_copy": "🤝 Copy Trading",
-        "btn_refer": "🎉 Invite & Earn",
-        "btn_settings": "⚙️ Settings",
-        "btn_language": "🌐 Language",
-        "btn_help": "❓ Help",
-        "btn_back": "⬅️ Back to Menu",
-
-        "wallet": "Wallet",
-        "address": "Address",
-        "balance": "Balance",
-        "referral": "Referral",
-        "invite": "Invite friends and earn rewards",
-        "getting_started": "Getting Started",
-        "send_token": "Send a token contract address to begin trading instantly.",
-        "follow": "Follow official accounts for updates and support.",
-
-        "solana": "Solana",
-        "unknown_token": "Unknown Token",
-        "dex": "DEX",
-        "market_cap": "Market Cap",
-        "price": "Price",
-        "liquidity": "Liquidity",
-        "tax": "Tax",
-        "no_wallet": "You haven't set up a wallet yet",
-        "access_details": "To access token details, please import your wallet first",
-        "enter_contract": "Please enter the token contract address:",
-
-        "step1": "🔐 <b>Import Wallet - Step 1 of 2</b>\n\nWhat would you like to name this wallet?\n\nLetters and numbers only.\n<i>For example: \"MainWallet\" or \"Wallet123\".</i>",
-        "invalid_wallet_name": "⚠️ Please use letters and numbers only.\nExample: \"MainWallet\" or \"Wallet123\".",
-        "step2": "🔐 <b>Import Wallet - Step 2 of 2</b>\n\nWallet import is currently disabled in this test version.\n\n⚠️ <b>Do not paste your private key or recovery phrase here.</b>\n\nThis screen is only a placeholder for the wallet import flow.",
-        "import_failed": "❌ Import failed!\n\n⚠️ Error: <i>Wallet import is currently disabled in this test version.</i>",
-
-        "wallet_required": "❌ Failed.\n\n⚠️ Error: <i>You have no wallets. Please bind a wallet or generate a new one.</i>",
-
-        "settings_panel": (
-            "Customize your general settings. Click on ⚙️ Buy or ⚙️ Sell to customize the settings of "
-            "your buys and sells respectively.\n\n"
-            "ℹ️ Global Settings are common to all of your connected wallets. They dictate the settings "
-            "for your manual trades, and serve as default settings for your automated trades.\n"
-            "ℹ️ The settings of your automated trades can be further customized to override your global "
-            "settings through dedicated Signals, Copytrade, and Auto Snipe settings."
-        ),
-        "anti_mev": "Anti-MEV",
-        "degen_mode": "Degen Mode 😈",
-        "buy": "⚙️ Buy",
-        "sell": "⚙️ Sell",
-        "initial_fees": "Initial Includes Fees",
-        "monitor": "Monitor (All Chains)",
-        "wallet_selection": "Wallet Selection (All Chains)",
-        "on": "On",
-        "detailed": "Detailed",
-        "single": "Single",
-
-        "limit_orders_text": (
-            "Add orders based on specified prices or percentage changes. Bot will automatically trigger "
-            "buy or sell actions, facilitating take profit and stop loss\n\n"
-            "✅The trigger price of the limit order and the actual initiation price have a 1% tolerance. "
-            "The trading mode will follow your selections in the trading panel. Turbo mode is quicker, "
-            "and Anti-MEV mode is safer."
-        ),
-        "refresh": "🔄 Refresh",
-        "existing_orders": "📝 Existing Orders",
-        "add_limit_order": "➕ Add Limit Order",
-
-        "language_title": "🌐 <b>Language</b>\n\nChoose your language:",
-        "language_saved": "✅ Language setting saved.",
-        "language_alert": "Language saved",
-        "refer_text": "🏆 <b>Invite & Earn</b>\n\nYour referral link:\n{link}\n\nInvite friends and earn rewards.",
-        "help": "📖 <b>Help</b>\n\n1. Send a Solana token contract address.\n2. The bot shows token information.\n3. Wallet functions will be added later.\n\nSupport: your-support@email.com",
-        "unknown_feature": "This feature is not available yet.",
-    },
-
+    "en": BASE_TEXT,
     "de": {
+        **BASE_TEXT,
         "btn_start_trading": "🚀 Trading starten",
         "btn_wallet": "👜 Wallet",
         "btn_import": "📥 Import",
@@ -144,73 +232,79 @@ TRANSLATIONS = {
         "btn_language": "🌐 Sprache",
         "btn_help": "❓ Hilfe",
         "btn_back": "⬅️ Zurück zum Menü",
-
-        "wallet": "Wallet",
         "address": "Adresse",
         "balance": "Guthaben",
-        "referral": "Empfehlung",
         "invite": "Freunde einladen und Rewards verdienen",
         "getting_started": "Loslegen",
         "send_token": "Sende eine Token-Contract-Adresse, um sofort zu starten.",
         "follow": "Folge den offiziellen Accounts für Updates und Support.",
-
-        "solana": "Solana",
         "unknown_token": "Unbekannter Token",
-        "dex": "DEX",
-        "market_cap": "Market Cap",
         "price": "Preis",
         "liquidity": "Liquidität",
-        "tax": "Tax",
         "no_wallet": "Du hast noch keine Wallet eingerichtet",
         "access_details": "Um Token-Details zu sehen, importiere bitte zuerst deine Wallet",
         "enter_contract": "Bitte gib die Token-Contract-Adresse ein:",
-
-        "step1": "🔐 <b>Wallet importieren - Schritt 1 von 2</b>\n\nWie möchtest du diese Wallet nennen?\n\nNur Buchstaben und Zahlen.\n<i>Zum Beispiel: \"MainWallet\" oder \"Wallet123\".</i>",
-        "invalid_wallet_name": "⚠️ Bitte nur Buchstaben und Zahlen verwenden.\nBeispiel: \"MainWallet\" oder \"Wallet123\".",
-        "step2": "🔐 <b>Wallet importieren - Schritt 2 von 2</b>\n\nDer Wallet-Import ist in dieser Testversion aktuell deaktiviert.\n\n⚠️ <b>Füge hier keinen Private Key und keine Recovery Phrase ein.</b>\n\nDieser Bildschirm ist nur ein Platzhalter für den Wallet-Import.",
-        "import_failed": "❌ Import fehlgeschlagen!\n\n⚠️ Fehler: <i>Der Wallet-Import ist in dieser Testversion aktuell deaktiviert.</i>",
-
-        "wallet_required": "❌ Fehlgeschlagen.\n\n⚠️ Fehler: <i>Du hast keine Wallets. Bitte verbinde eine Wallet oder erstelle eine neue.</i>",
-
-        "settings_panel": (
-            "Passe deine allgemeinen Einstellungen an. Klicke auf ⚙️ Kaufen oder ⚙️ Verkaufen, "
-            "um die Einstellungen für Käufe und Verkäufe anzupassen.\n\n"
-            "ℹ️ Globale Einstellungen gelten für alle verbundenen Wallets. Sie bestimmen deine manuellen "
-            "Trades und dienen als Standard für automatisierte Trades.\n"
-            "ℹ️ Automatisierte Trades können später über Signals, Copytrade und Auto Snipe separat angepasst werden."
+        "wallet_required": (
+            "❌ Fehlgeschlagen.\n\n"
+            "⚠️ Fehler: <i>Du hast keine Wallets. Bitte verbinde eine Wallet oder erstelle eine neue.</i>"
         ),
-        "anti_mev": "Anti-MEV",
-        "degen_mode": "Degen Mode 😈",
-        "buy": "⚙️ Kaufen",
-        "sell": "⚙️ Verkaufen",
-        "initial_fees": "Initial Includes Fees",
-        "monitor": "Monitor (Alle Chains)",
-        "wallet_selection": "Wallet-Auswahl (Alle Chains)",
-        "on": "An",
-        "detailed": "Detailed",
-        "single": "Single",
-
-        "limit_orders_text": (
-            "Füge Orders anhand bestimmter Preise oder Prozentänderungen hinzu. Der Bot würde automatisch "
-            "Kauf- oder Verkaufsaktionen auslösen, z. B. Take Profit und Stop Loss.\n\n"
-            "✅Der Triggerpreis der Limit Order und der tatsächliche Startpreis haben eine Toleranz von 1%. "
-            "Der Trading-Modus folgt deinen Einstellungen im Trading Panel. Turbo ist schneller, Anti-MEV ist sicherer."
-        ),
-        "refresh": "🔄 Aktualisieren",
-        "existing_orders": "📝 Bestehende Orders",
-        "add_limit_order": "➕ Limit Order hinzufügen",
-
-        "language_title": "🌐 <b>Sprache</b>\n\nWähle deine Sprache:",
+        "language_title": "Bitte wähle deine Sprache:",
         "language_saved": "✅ Sprache wurde gespeichert.",
         "language_alert": "Sprache gespeichert",
-        "refer_text": "🏆 <b>Einladen & Verdienen</b>\n\nDein Referral-Link:\n{link}\n\nLade Freunde ein und verdiene Rewards.",
-        "help": "📖 <b>Hilfe</b>\n\n1. Sende eine Solana Token-Contract-Adresse.\n2. Der Bot zeigt Token-Informationen an.\n3. Wallet-Funktionen werden später ergänzt.\n\nSupport: your-support@email.com",
-        "unknown_feature": "Diese Funktion ist noch nicht verfügbar.",
     },
+    "fr": {
+        **BASE_TEXT,
+        "btn_start_trading": "🚀 Commencer",
+        "btn_wallet": "👜 Wallet",
+        "btn_import": "📥 Importer",
+        "btn_portfolio": "📈 Mon Portefeuille",
+        "btn_limit": "🎯 Ordres Limites",
+        "btn_copy": "🤝 Copy Trading",
+        "btn_refer": "🎉 Inviter & Gagner",
+        "btn_settings": "⚙️ Paramètres",
+        "btn_language": "🌐 Langue",
+        "btn_help": "❓ Aide",
+        "language_title": "Veuillez choisir votre langue :",
+        "language_saved": "✅ Langue enregistrée.",
+        "language_alert": "Langue enregistrée",
+    },
+    "es": {
+        **BASE_TEXT,
+        "btn_start_trading": "🚀 Empezar Trading",
+        "btn_wallet": "👜 Wallet",
+        "btn_import": "📥 Importar",
+        "btn_portfolio": "📈 Mi Portafolio",
+        "btn_limit": "🎯 Órdenes Límite",
+        "btn_copy": "🤝 Copy Trading",
+        "btn_refer": "🎉 Invitar & Ganar",
+        "btn_settings": "⚙️ Ajustes",
+        "btn_language": "🌐 Idioma",
+        "btn_help": "❓ Ayuda",
+        "language_title": "Elige tu idioma:",
+        "language_saved": "✅ Idioma guardado.",
+        "language_alert": "Idioma guardado",
+    },
+    "tr": {
+        **BASE_TEXT,
+        "btn_start_trading": "🚀 Trading Başlat",
+        "btn_wallet": "👜 Wallet",
+        "btn_import": "📥 İçe Aktar",
+        "btn_portfolio": "📈 Portföyüm",
+        "btn_limit": "🎯 Limit Emirleri",
+        "btn_copy": "🤝 Copy Trading",
+        "btn_refer": "🎉 Davet Et & Kazan",
+        "btn_settings": "⚙️ Ayarlar",
+        "btn_language": "🌐 Dil",
+        "btn_help": "❓ Yardım",
+        "language_title": "Lütfen dilinizi seçin:",
+        "language_saved": "✅ Dil kaydedildi.",
+        "language_alert": "Dil kaydedildi",
+    },
+    "zh": {**BASE_TEXT, "language_alert": "语言已保存", "language_saved": "✅ 语言已保存。"},
+    "ru": {**BASE_TEXT, "language_alert": "Язык сохранён", "language_saved": "✅ Язык сохранён."},
+    "vi": {**BASE_TEXT, "language_alert": "Đã lưu ngôn ngữ", "language_saved": "✅ Đã lưu ngôn ngữ."},
+    "ar": {**BASE_TEXT, "language_alert": "تم حفظ اللغة", "language_saved": "✅ تم حفظ اللغة."},
 }
-
-for code in ["fr", "es", "pt", "tr"]:
-    TRANSLATIONS[code] = TRANSLATIONS["en"].copy()
 
 
 def get_lang(chat_id) -> str:
@@ -218,7 +312,7 @@ def get_lang(chat_id) -> str:
 
 
 def t(lang: str, key: str) -> str:
-    return TRANSLATIONS.get(lang, TRANSLATIONS["en"]).get(key, TRANSLATIONS["en"].get(key, key))
+    return TRANSLATIONS.get(lang, BASE_TEXT).get(key, BASE_TEXT.get(key, key))
 
 
 def get_chat_settings(chat_id):
@@ -244,8 +338,7 @@ def get_ref_code(user) -> str:
 
 
 def get_ref_link(user) -> str:
-    ref_code = get_ref_code(user)
-    return f"https://t.me/{BOT_USERNAME}?start={ref_code}"
+    return f"https://t.me/{BOT_USERNAME}?start={get_ref_code(user)}"
 
 
 def main_menu_keyboard(lang: str) -> InlineKeyboardMarkup:
@@ -340,22 +433,39 @@ def limit_orders_keyboard(lang: str) -> InlineKeyboardMarkup:
     )
 
 
+def help_keyboard(lang: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=t(lang, "trading_guide"), callback_data="help_trading")],
+            [InlineKeyboardButton(text=t(lang, "system_maintenance"), callback_data="help_system")],
+            [InlineKeyboardButton(text=t(lang, "wallet_operations"), callback_data="help_wallet")],
+        ]
+    )
+
+
+def selected(lang: str, code: str, label: str) -> str:
+    return f"✅ {label}" if lang == code else label
+
+
 def language_keyboard(lang: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="🇬🇧 English", callback_data="lang_en"),
-                InlineKeyboardButton(text="🇩🇪 Deutsch", callback_data="lang_de"),
+                InlineKeyboardButton(text=selected(lang, "en", "English"), callback_data="lang_en"),
+                InlineKeyboardButton(text=selected(lang, "zh", "简体中文"), callback_data="lang_zh"),
             ],
             [
-                InlineKeyboardButton(text="🇫🇷 Français", callback_data="lang_fr"),
-                InlineKeyboardButton(text="🇪🇸 Español", callback_data="lang_es"),
+                InlineKeyboardButton(text=selected(lang, "ru", "Русский"), callback_data="lang_ru"),
+                InlineKeyboardButton(text=selected(lang, "vi", "Tiếng Việt"), callback_data="lang_vi"),
             ],
             [
-                InlineKeyboardButton(text="🇵🇹 Português", callback_data="lang_pt"),
-                InlineKeyboardButton(text="🇹🇷 Türkçe", callback_data="lang_tr"),
+                InlineKeyboardButton(text=selected(lang, "es", "Español"), callback_data="lang_es"),
+                InlineKeyboardButton(text=selected(lang, "ar", "العربية"), callback_data="lang_ar"),
             ],
-            [InlineKeyboardButton(text=t(lang, "btn_back"), callback_data="back_to_menu")],
+            [
+                InlineKeyboardButton(text=selected(lang, "fr", "Français"), callback_data="lang_fr"),
+                InlineKeyboardButton(text=selected(lang, "tr", "Türkçe"), callback_data="lang_tr"),
+            ],
         ]
     )
 
@@ -651,6 +761,116 @@ async def limit_order(callback: CallbackQuery):
     )
 
 
+@dp.callback_query(F.data == "refer")
+async def refer(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+    referral_link = get_ref_link(callback.from_user)
+
+    text = (
+        f"🔗 <b>{t(lang, 'invite_link')}:</b> {html.escape(referral_link)}\n\n"
+        f"💵 <b>{t(lang, 'withdrawable')}:</b> 0 ($0)(0 pending)\n"
+        f"💰 <b>{t(lang, 'total_withdrawn')}:</b> 0 ($0)\n"
+        f"👥 <b>{t(lang, 'total_invited')}:</b> 0 people\n"
+        f"💳 <b>{t(lang, 'receiving_address')}:</b> <code>null</code>\n\n"
+        f"📖 <b>{t(lang, 'rules')}:</b>\n"
+        f"{t(lang, 'invite_rules')}"
+    )
+
+    await callback.answer()
+    await callback.message.answer(
+        text,
+        parse_mode="HTML",
+        disable_web_page_preview=False,
+    )
+
+
+@dp.callback_query(F.data == "help")
+async def help_handler(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "help_intro"),
+        parse_mode="HTML",
+        reply_markup=help_keyboard(lang),
+    )
+
+
+@dp.callback_query(F.data == "help_trading")
+async def help_trading(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "trading_guide_text"),
+        parse_mode="HTML",
+        reply_markup=help_keyboard(lang),
+    )
+
+
+@dp.callback_query(F.data == "help_system")
+async def help_system(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "system_text"),
+        parse_mode="HTML",
+        reply_markup=help_keyboard(lang),
+    )
+
+
+@dp.callback_query(F.data == "help_wallet")
+async def help_wallet(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "wallet_operations_text"),
+        parse_mode="HTML",
+        reply_markup=help_keyboard(lang),
+    )
+
+
+@dp.callback_query(F.data == "language")
+async def language(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "language_title"),
+        parse_mode="HTML",
+        reply_markup=language_keyboard(lang),
+    )
+
+
+@dp.callback_query(
+    F.data.in_(
+        {
+            "lang_en",
+            "lang_zh",
+            "lang_ru",
+            "lang_vi",
+            "lang_es",
+            "lang_ar",
+            "lang_fr",
+            "lang_tr",
+            "lang_de",
+        }
+    )
+)
+async def choose_language(callback: CallbackQuery):
+    new_lang = callback.data.replace("lang_", "")
+    USER_LANG[callback.message.chat.id] = new_lang
+
+    await callback.answer(t(new_lang, "language_alert"))
+    await callback.message.edit_text(
+        t(new_lang, "language_title"),
+        parse_mode="HTML",
+        reply_markup=language_keyboard(new_lang),
+    )
+
+
 @dp.callback_query(F.data == "import_wallet")
 async def import_wallet(callback: CallbackQuery, state: FSMContext):
     lang = get_lang(callback.message.chat.id)
@@ -717,57 +937,6 @@ async def text_handler(message: Message):
             t(lang, "enter_contract"),
             reply_markup=back_keyboard(lang),
         )
-
-
-@dp.callback_query(F.data == "language")
-async def language(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "language_title"),
-        parse_mode="HTML",
-        reply_markup=language_keyboard(lang),
-    )
-
-
-@dp.callback_query(F.data.in_({"lang_en", "lang_de", "lang_fr", "lang_es", "lang_pt", "lang_tr"}))
-async def choose_language(callback: CallbackQuery):
-    new_lang = callback.data.replace("lang_", "")
-    USER_LANG[callback.message.chat.id] = new_lang
-
-    await callback.answer(t(new_lang, "language_alert"))
-    await callback.message.answer(
-        t(new_lang, "language_saved"),
-        parse_mode="HTML",
-        reply_markup=back_keyboard(new_lang),
-    )
-
-
-@dp.callback_query(F.data == "refer")
-async def refer(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-    referral_link = get_ref_link(callback.from_user)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "refer_text").format(link=html.escape(referral_link)),
-        parse_mode="HTML",
-        reply_markup=back_keyboard(lang),
-        disable_web_page_preview=False,
-    )
-
-
-@dp.callback_query(F.data == "help")
-async def help_handler(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "help"),
-        parse_mode="HTML",
-        reply_markup=back_keyboard(lang),
-    )
 
 
 @dp.callback_query()
