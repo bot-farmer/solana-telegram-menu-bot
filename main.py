@@ -44,9 +44,8 @@ WEBHOOK_URL = f"https://{WEBHOOK_HOST}{WEBHOOK_PATH}"
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 
-# Sprache wird erstmal nur im Speicher gehalten.
-# Bei Render-Restart/Deploy kann diese Einstellung zurückgesetzt werden.
 USER_LANG = {}
+USER_SETTINGS = {}
 
 
 class ImportWalletState(StatesGroup):
@@ -56,17 +55,18 @@ class ImportWalletState(StatesGroup):
 
 TRANSLATIONS = {
     "en": {
-        "btn_import": "🔐 Import Wallet",
-        "btn_manage": "💳 Manage Wallet",
-        "btn_buy_sell": "💰 Buy/Sell",
-        "btn_copy": "👥 Copy Trading",
-        "btn_portfolio": "🏦 Portfolio",
-        "btn_limit": "📌 Limit Order",
+        "btn_start_trading": "🚀 Start Trading",
+        "btn_wallet": "👜 Wallet",
+        "btn_import": "📥 Import",
+        "btn_portfolio": "📈 My Portfolio",
+        "btn_limit": "🎯 Limit Orders",
+        "btn_copy": "🤝 Copy Trading",
+        "btn_refer": "🎉 Invite & Earn",
         "btn_settings": "⚙️ Settings",
         "btn_language": "🌐 Language",
-        "btn_refer": "🏆 Refer & Earn",
-        "btn_help": "📖 Help",
+        "btn_help": "❓ Help",
         "btn_back": "⬅️ Back to Menu",
+
         "wallet": "Wallet",
         "address": "Address",
         "balance": "Balance",
@@ -75,6 +75,7 @@ TRANSLATIONS = {
         "getting_started": "Getting Started",
         "send_token": "Send a token contract address to begin trading instantly.",
         "follow": "Follow official accounts for updates and support.",
+
         "solana": "Solana",
         "unknown_token": "Unknown Token",
         "dex": "DEX",
@@ -85,36 +86,65 @@ TRANSLATIONS = {
         "no_wallet": "You haven't set up a wallet yet",
         "access_details": "To access token details, please import your wallet first",
         "enter_contract": "Please enter the token contract address:",
-        "scan_failed": "Token data could not be loaded yet.",
+
         "step1": "🔐 <b>Import Wallet - Step 1 of 2</b>\n\nWhat would you like to name this wallet?\n\nLetters and numbers only.\n<i>For example: \"MainWallet\" or \"Wallet123\".</i>",
         "invalid_wallet_name": "⚠️ Please use letters and numbers only.\nExample: \"MainWallet\" or \"Wallet123\".",
         "step2": "🔐 <b>Import Wallet - Step 2 of 2</b>\n\nWallet import is currently disabled in this test version.\n\n⚠️ <b>Do not paste your private key or recovery phrase here.</b>\n\nThis screen is only a placeholder for the wallet import flow.",
         "import_failed": "❌ Import failed!\n\n⚠️ Error: <i>Wallet import is currently disabled in this test version.</i>",
-        "manage_wallet": "💳 <b>Manage Wallet</b>\n\nNo wallet connected yet.\n\nImport or create a wallet to continue.",
-        "buy_sell": "💰 <b>Buy/Sell</b>\n\nPlease enter the token contract address:",
-        "copy_trading": "👥 <b>Copy Trading</b>\n\nCopy trading is not active yet.\n\nSoon you will be able to follow selected wallets.",
-        "portfolio": "🏦 <b>Portfolio</b>\n\nWallet: —\nBalance: —\nTokens: —\n\nPlease import or connect a wallet first.",
-        "limit_order": "📌 <b>Limit Order</b>\n\nLimit orders are not active yet.\n\nThis menu is already prepared for the next version.",
-        "settings": "⚙️ <b>Settings</b>\n\nSlippage: —\nGas/Priority Fee: —\nMEV Protection: —\n\nSettings will be added in the next version.",
+
+        "wallet_required": "❌ Failed.\n\n⚠️ Error: <i>You have no wallets. Please bind a wallet or generate a new one.</i>",
+
+        "settings_panel": (
+            "Customize your general settings. Click on ⚙️ Buy or ⚙️ Sell to customize the settings of "
+            "your buys and sells respectively.\n\n"
+            "ℹ️ Global Settings are common to all of your connected wallets. They dictate the settings "
+            "for your manual trades, and serve as default settings for your automated trades.\n"
+            "ℹ️ The settings of your automated trades can be further customized to override your global "
+            "settings through dedicated Signals, Copytrade, and Auto Snipe settings."
+        ),
+        "anti_mev": "Anti-MEV",
+        "degen_mode": "Degen Mode 😈",
+        "buy": "⚙️ Buy",
+        "sell": "⚙️ Sell",
+        "initial_fees": "Initial Includes Fees",
+        "monitor": "Monitor (All Chains)",
+        "wallet_selection": "Wallet Selection (All Chains)",
+        "on": "On",
+        "detailed": "Detailed",
+        "single": "Single",
+
+        "limit_orders_text": (
+            "Add orders based on specified prices or percentage changes. Bot will automatically trigger "
+            "buy or sell actions, facilitating take profit and stop loss\n\n"
+            "✅The trigger price of the limit order and the actual initiation price have a 1% tolerance. "
+            "The trading mode will follow your selections in the trading panel. Turbo mode is quicker, "
+            "and Anti-MEV mode is safer."
+        ),
+        "refresh": "🔄 Refresh",
+        "existing_orders": "📝 Existing Orders",
+        "add_limit_order": "➕ Add Limit Order",
+
         "language_title": "🌐 <b>Language</b>\n\nChoose your language:",
         "language_saved": "✅ Language setting saved.",
         "language_alert": "Language saved",
-        "refer_text": "🏆 <b>Refer & Earn</b>\n\nYour referral link:\n{link}\n\nInvite friends and earn rewards.",
+        "refer_text": "🏆 <b>Invite & Earn</b>\n\nYour referral link:\n{link}\n\nInvite friends and earn rewards.",
         "help": "📖 <b>Help</b>\n\n1. Send a Solana token contract address.\n2. The bot shows token information.\n3. Wallet functions will be added later.\n\nSupport: your-support@email.com",
         "unknown_feature": "This feature is not available yet.",
     },
+
     "de": {
-        "btn_import": "🔐 Wallet importieren",
-        "btn_manage": "💳 Wallet verwalten",
-        "btn_buy_sell": "💰 Kaufen/Verkaufen",
-        "btn_copy": "👥 Copy Trading",
-        "btn_portfolio": "🏦 Portfolio",
-        "btn_limit": "📌 Limit Order",
+        "btn_start_trading": "🚀 Trading starten",
+        "btn_wallet": "👜 Wallet",
+        "btn_import": "📥 Import",
+        "btn_portfolio": "📈 Mein Portfolio",
+        "btn_limit": "🎯 Limit Orders",
+        "btn_copy": "🤝 Copy Trading",
+        "btn_refer": "🎉 Einladen & Verdienen",
         "btn_settings": "⚙️ Einstellungen",
         "btn_language": "🌐 Sprache",
-        "btn_refer": "🏆 Freunde einladen",
-        "btn_help": "📖 Hilfe",
+        "btn_help": "❓ Hilfe",
         "btn_back": "⬅️ Zurück zum Menü",
+
         "wallet": "Wallet",
         "address": "Adresse",
         "balance": "Guthaben",
@@ -123,6 +153,7 @@ TRANSLATIONS = {
         "getting_started": "Loslegen",
         "send_token": "Sende eine Token-Contract-Adresse, um sofort zu starten.",
         "follow": "Folge den offiziellen Accounts für Updates und Support.",
+
         "solana": "Solana",
         "unknown_token": "Unbekannter Token",
         "dex": "DEX",
@@ -133,217 +164,53 @@ TRANSLATIONS = {
         "no_wallet": "Du hast noch keine Wallet eingerichtet",
         "access_details": "Um Token-Details zu sehen, importiere bitte zuerst deine Wallet",
         "enter_contract": "Bitte gib die Token-Contract-Adresse ein:",
-        "scan_failed": "Token-Daten konnten noch nicht geladen werden.",
+
         "step1": "🔐 <b>Wallet importieren - Schritt 1 von 2</b>\n\nWie möchtest du diese Wallet nennen?\n\nNur Buchstaben und Zahlen.\n<i>Zum Beispiel: \"MainWallet\" oder \"Wallet123\".</i>",
         "invalid_wallet_name": "⚠️ Bitte nur Buchstaben und Zahlen verwenden.\nBeispiel: \"MainWallet\" oder \"Wallet123\".",
         "step2": "🔐 <b>Wallet importieren - Schritt 2 von 2</b>\n\nDer Wallet-Import ist in dieser Testversion aktuell deaktiviert.\n\n⚠️ <b>Füge hier keinen Private Key und keine Recovery Phrase ein.</b>\n\nDieser Bildschirm ist nur ein Platzhalter für den Wallet-Import.",
         "import_failed": "❌ Import fehlgeschlagen!\n\n⚠️ Fehler: <i>Der Wallet-Import ist in dieser Testversion aktuell deaktiviert.</i>",
-        "manage_wallet": "💳 <b>Wallet verwalten</b>\n\nEs ist noch keine Wallet verbunden.\n\nImportiere oder erstelle eine Wallet, um fortzufahren.",
-        "buy_sell": "💰 <b>Kaufen/Verkaufen</b>\n\nBitte gib die Token-Contract-Adresse ein:",
-        "copy_trading": "👥 <b>Copy Trading</b>\n\nCopy Trading ist noch nicht aktiv.\n\nBald kannst du ausgewählten Wallets folgen.",
-        "portfolio": "🏦 <b>Portfolio</b>\n\nWallet: —\nGuthaben: —\nTokens: —\n\nBitte importiere oder verbinde zuerst eine Wallet.",
-        "limit_order": "📌 <b>Limit Order</b>\n\nLimit Orders sind noch nicht aktiv.\n\nDieses Menü ist bereits für die nächste Version vorbereitet.",
-        "settings": "⚙️ <b>Einstellungen</b>\n\nSlippage: —\nGas/Priority Fee: —\nMEV-Schutz: —\n\nEinstellungen werden in der nächsten Version ergänzt.",
+
+        "wallet_required": "❌ Fehlgeschlagen.\n\n⚠️ Fehler: <i>Du hast keine Wallets. Bitte verbinde eine Wallet oder erstelle eine neue.</i>",
+
+        "settings_panel": (
+            "Passe deine allgemeinen Einstellungen an. Klicke auf ⚙️ Kaufen oder ⚙️ Verkaufen, "
+            "um die Einstellungen für Käufe und Verkäufe anzupassen.\n\n"
+            "ℹ️ Globale Einstellungen gelten für alle verbundenen Wallets. Sie bestimmen deine manuellen "
+            "Trades und dienen als Standard für automatisierte Trades.\n"
+            "ℹ️ Automatisierte Trades können später über Signals, Copytrade und Auto Snipe separat angepasst werden."
+        ),
+        "anti_mev": "Anti-MEV",
+        "degen_mode": "Degen Mode 😈",
+        "buy": "⚙️ Kaufen",
+        "sell": "⚙️ Verkaufen",
+        "initial_fees": "Initial Includes Fees",
+        "monitor": "Monitor (Alle Chains)",
+        "wallet_selection": "Wallet-Auswahl (Alle Chains)",
+        "on": "An",
+        "detailed": "Detailed",
+        "single": "Single",
+
+        "limit_orders_text": (
+            "Füge Orders anhand bestimmter Preise oder Prozentänderungen hinzu. Der Bot würde automatisch "
+            "Kauf- oder Verkaufsaktionen auslösen, z. B. Take Profit und Stop Loss.\n\n"
+            "✅Der Triggerpreis der Limit Order und der tatsächliche Startpreis haben eine Toleranz von 1%. "
+            "Der Trading-Modus folgt deinen Einstellungen im Trading Panel. Turbo ist schneller, Anti-MEV ist sicherer."
+        ),
+        "refresh": "🔄 Aktualisieren",
+        "existing_orders": "📝 Bestehende Orders",
+        "add_limit_order": "➕ Limit Order hinzufügen",
+
         "language_title": "🌐 <b>Sprache</b>\n\nWähle deine Sprache:",
         "language_saved": "✅ Sprache wurde gespeichert.",
         "language_alert": "Sprache gespeichert",
-        "refer_text": "🏆 <b>Freunde einladen</b>\n\nDein Referral-Link:\n{link}\n\nLade Freunde ein und verdiene Rewards.",
+        "refer_text": "🏆 <b>Einladen & Verdienen</b>\n\nDein Referral-Link:\n{link}\n\nLade Freunde ein und verdiene Rewards.",
         "help": "📖 <b>Hilfe</b>\n\n1. Sende eine Solana Token-Contract-Adresse.\n2. Der Bot zeigt Token-Informationen an.\n3. Wallet-Funktionen werden später ergänzt.\n\nSupport: your-support@email.com",
         "unknown_feature": "Diese Funktion ist noch nicht verfügbar.",
     },
-    "fr": {
-        "btn_import": "🔐 Importer Wallet",
-        "btn_manage": "💳 Gérer Wallet",
-        "btn_buy_sell": "💰 Acheter/Vendre",
-        "btn_copy": "👥 Copy Trading",
-        "btn_portfolio": "🏦 Portefeuille",
-        "btn_limit": "📌 Ordre Limite",
-        "btn_settings": "⚙️ Paramètres",
-        "btn_language": "🌐 Langue",
-        "btn_refer": "🏆 Parrainage",
-        "btn_help": "📖 Aide",
-        "btn_back": "⬅️ Retour au menu",
-        "wallet": "Wallet",
-        "address": "Adresse",
-        "balance": "Solde",
-        "referral": "Parrainage",
-        "invite": "Invitez des amis et gagnez des récompenses",
-        "getting_started": "Commencer",
-        "send_token": "Envoyez une adresse de contrat token pour commencer.",
-        "follow": "Suivez les comptes officiels pour les mises à jour et le support.",
-        "solana": "Solana",
-        "unknown_token": "Token inconnu",
-        "dex": "DEX",
-        "market_cap": "Capitalisation",
-        "price": "Prix",
-        "liquidity": "Liquidité",
-        "tax": "Taxe",
-        "no_wallet": "Vous n'avez pas encore configuré de wallet",
-        "access_details": "Pour accéder aux détails du token, importez d'abord votre wallet",
-        "enter_contract": "Veuillez saisir l'adresse du contrat token :",
-        "scan_failed": "Les données du token n'ont pas pu être chargées.",
-        "step1": "🔐 <b>Importer Wallet - Étape 1 sur 2</b>\n\nQuel nom souhaitez-vous donner à ce wallet ?\n\nLettres et chiffres uniquement.\n<i>Par exemple : \"MainWallet\" ou \"Wallet123\".</i>",
-        "invalid_wallet_name": "⚠️ Utilisez uniquement des lettres et des chiffres.\nExemple : \"MainWallet\" ou \"Wallet123\".",
-        "step2": "🔐 <b>Importer Wallet - Étape 2 sur 2</b>\n\nL'import de wallet est désactivé dans cette version de test.\n\n⚠️ <b>Ne collez pas votre clé privée ou phrase de récupération ici.</b>\n\nCet écran est seulement un placeholder.",
-        "import_failed": "❌ Import échoué !\n\n⚠️ Erreur : <i>L'import de wallet est désactivé dans cette version de test.</i>",
-        "manage_wallet": "💳 <b>Gérer Wallet</b>\n\nAucun wallet connecté.\n\nImportez ou créez un wallet pour continuer.",
-        "buy_sell": "💰 <b>Acheter/Vendre</b>\n\nVeuillez saisir l'adresse du contrat token :",
-        "copy_trading": "👥 <b>Copy Trading</b>\n\nLe copy trading n'est pas encore actif.\n\nBientôt, vous pourrez suivre des wallets sélectionnés.",
-        "portfolio": "🏦 <b>Portefeuille</b>\n\nWallet : —\nSolde : —\nTokens : —\n\nVeuillez d'abord importer ou connecter un wallet.",
-        "limit_order": "📌 <b>Ordre Limite</b>\n\nLes ordres limites ne sont pas encore actifs.\n\nCe menu est préparé pour la prochaine version.",
-        "settings": "⚙️ <b>Paramètres</b>\n\nSlippage : —\nGas/Priority Fee : —\nProtection MEV : —\n\nLes paramètres seront ajoutés plus tard.",
-        "language_title": "🌐 <b>Langue</b>\n\nChoisissez votre langue :",
-        "language_saved": "✅ Langue enregistrée.",
-        "language_alert": "Langue enregistrée",
-        "refer_text": "🏆 <b>Parrainage</b>\n\nVotre lien :\n{link}\n\nInvitez des amis et gagnez des récompenses.",
-        "help": "📖 <b>Aide</b>\n\n1. Envoyez une adresse de contrat Solana.\n2. Le bot affiche les informations du token.\n3. Les fonctions wallet seront ajoutées plus tard.\n\nSupport : your-support@email.com",
-        "unknown_feature": "Cette fonction n'est pas encore disponible.",
-    },
-    "es": {
-        "btn_import": "🔐 Importar Wallet",
-        "btn_manage": "💳 Gestionar Wallet",
-        "btn_buy_sell": "💰 Comprar/Vender",
-        "btn_copy": "👥 Copy Trading",
-        "btn_portfolio": "🏦 Portafolio",
-        "btn_limit": "📌 Orden Límite",
-        "btn_settings": "⚙️ Ajustes",
-        "btn_language": "🌐 Idioma",
-        "btn_refer": "🏆 Invitar",
-        "btn_help": "📖 Ayuda",
-        "btn_back": "⬅️ Volver al menú",
-        "wallet": "Wallet",
-        "address": "Dirección",
-        "balance": "Saldo",
-        "referral": "Referidos",
-        "invite": "Invita amigos y gana recompensas",
-        "getting_started": "Primeros pasos",
-        "send_token": "Envía una dirección de contrato token para empezar.",
-        "follow": "Sigue las cuentas oficiales para actualizaciones y soporte.",
-        "solana": "Solana",
-        "unknown_token": "Token desconocido",
-        "dex": "DEX",
-        "market_cap": "Capitalización",
-        "price": "Precio",
-        "liquidity": "Liquidez",
-        "tax": "Impuesto",
-        "no_wallet": "Aún no has configurado una wallet",
-        "access_details": "Para ver detalles del token, primero importa tu wallet",
-        "enter_contract": "Introduce la dirección del contrato token:",
-        "scan_failed": "No se pudieron cargar los datos del token.",
-        "step1": "🔐 <b>Importar Wallet - Paso 1 de 2</b>\n\n¿Cómo quieres llamar a esta wallet?\n\nSolo letras y números.\n<i>Por ejemplo: \"MainWallet\" o \"Wallet123\".</i>",
-        "invalid_wallet_name": "⚠️ Usa solo letras y números.\nEjemplo: \"MainWallet\" o \"Wallet123\".",
-        "step2": "🔐 <b>Importar Wallet - Paso 2 de 2</b>\n\nLa importación de wallet está desactivada en esta versión de prueba.\n\n⚠️ <b>No pegues aquí tu clave privada ni frase de recuperación.</b>\n\nEsta pantalla es solo un placeholder.",
-        "import_failed": "❌ ¡Importación fallida!\n\n⚠️ Error: <i>La importación de wallet está desactivada en esta versión de prueba.</i>",
-        "manage_wallet": "💳 <b>Gestionar Wallet</b>\n\nNo hay wallet conectada.\n\nImporta o crea una wallet para continuar.",
-        "buy_sell": "💰 <b>Comprar/Vender</b>\n\nIntroduce la dirección del contrato token:",
-        "copy_trading": "👥 <b>Copy Trading</b>\n\nCopy trading aún no está activo.\n\nPronto podrás seguir wallets seleccionadas.",
-        "portfolio": "🏦 <b>Portafolio</b>\n\nWallet: —\nSaldo: —\nTokens: —\n\nPrimero importa o conecta una wallet.",
-        "limit_order": "📌 <b>Orden Límite</b>\n\nLas órdenes límite aún no están activas.\n\nEste menú está preparado para la próxima versión.",
-        "settings": "⚙️ <b>Ajustes</b>\n\nSlippage: —\nGas/Priority Fee: —\nProtección MEV: —\n\nLos ajustes se añadirán después.",
-        "language_title": "🌐 <b>Idioma</b>\n\nElige tu idioma:",
-        "language_saved": "✅ Idioma guardado.",
-        "language_alert": "Idioma guardado",
-        "refer_text": "🏆 <b>Invitar</b>\n\nTu enlace de referido:\n{link}\n\nInvita amigos y gana recompensas.",
-        "help": "📖 <b>Ayuda</b>\n\n1. Envía una dirección de contrato Solana.\n2. El bot muestra información del token.\n3. Las funciones wallet se añadirán después.\n\nSoporte: your-support@email.com",
-        "unknown_feature": "Esta función aún no está disponible.",
-    },
-    "pt": {
-        "btn_import": "🔐 Importar Wallet",
-        "btn_manage": "💳 Gerenciar Wallet",
-        "btn_buy_sell": "💰 Comprar/Vender",
-        "btn_copy": "👥 Copy Trading",
-        "btn_portfolio": "🏦 Portfólio",
-        "btn_limit": "📌 Ordem Limitada",
-        "btn_settings": "⚙️ Configurações",
-        "btn_language": "🌐 Idioma",
-        "btn_refer": "🏆 Indicar",
-        "btn_help": "📖 Ajuda",
-        "btn_back": "⬅️ Voltar ao menu",
-        "wallet": "Wallet",
-        "address": "Endereço",
-        "balance": "Saldo",
-        "referral": "Indicação",
-        "invite": "Convide amigos e ganhe recompensas",
-        "getting_started": "Começando",
-        "send_token": "Envie um endereço de contrato token para começar.",
-        "follow": "Siga as contas oficiais para atualizações e suporte.",
-        "solana": "Solana",
-        "unknown_token": "Token desconhecido",
-        "dex": "DEX",
-        "market_cap": "Valor de mercado",
-        "price": "Preço",
-        "liquidity": "Liquidez",
-        "tax": "Taxa",
-        "no_wallet": "Você ainda não configurou uma wallet",
-        "access_details": "Para acessar detalhes do token, importe sua wallet primeiro",
-        "enter_contract": "Digite o endereço do contrato token:",
-        "scan_failed": "Não foi possível carregar os dados do token.",
-        "step1": "🔐 <b>Importar Wallet - Etapa 1 de 2</b>\n\nQual nome você quer dar a esta wallet?\n\nApenas letras e números.\n<i>Por exemplo: \"MainWallet\" ou \"Wallet123\".</i>",
-        "invalid_wallet_name": "⚠️ Use apenas letras e números.\nExemplo: \"MainWallet\" ou \"Wallet123\".",
-        "step2": "🔐 <b>Importar Wallet - Etapa 2 de 2</b>\n\nA importação de wallet está desativada nesta versão de teste.\n\n⚠️ <b>Não cole sua chave privada ou frase de recuperação aqui.</b>\n\nEsta tela é apenas um placeholder.",
-        "import_failed": "❌ Importação falhou!\n\n⚠️ Erro: <i>A importação de wallet está desativada nesta versão de teste.</i>",
-        "manage_wallet": "💳 <b>Gerenciar Wallet</b>\n\nNenhuma wallet conectada.\n\nImporte ou crie uma wallet para continuar.",
-        "buy_sell": "💰 <b>Comprar/Vender</b>\n\nDigite o endereço do contrato token:",
-        "copy_trading": "👥 <b>Copy Trading</b>\n\nCopy trading ainda não está ativo.\n\nEm breve você poderá seguir wallets selecionadas.",
-        "portfolio": "🏦 <b>Portfólio</b>\n\nWallet: —\nSaldo: —\nTokens: —\n\nImporte ou conecte uma wallet primeiro.",
-        "limit_order": "📌 <b>Ordem Limitada</b>\n\nOrdens limitadas ainda não estão ativas.\n\nEste menu já está preparado para a próxima versão.",
-        "settings": "⚙️ <b>Configurações</b>\n\nSlippage: —\nGas/Priority Fee: —\nProteção MEV: —\n\nConfigurações serão adicionadas depois.",
-        "language_title": "🌐 <b>Idioma</b>\n\nEscolha seu idioma:",
-        "language_saved": "✅ Idioma salvo.",
-        "language_alert": "Idioma salvo",
-        "refer_text": "🏆 <b>Indicar</b>\n\nSeu link de indicação:\n{link}\n\nConvide amigos e ganhe recompensas.",
-        "help": "📖 <b>Ajuda</b>\n\n1. Envie um endereço de contrato Solana.\n2. O bot mostra informações do token.\n3. Funções de wallet serão adicionadas depois.\n\nSuporte: your-support@email.com",
-        "unknown_feature": "Esta função ainda não está disponível.",
-    },
-    "tr": {
-        "btn_import": "🔐 Wallet İçe Aktar",
-        "btn_manage": "💳 Wallet Yönet",
-        "btn_buy_sell": "💰 Al/Sat",
-        "btn_copy": "👥 Copy Trading",
-        "btn_portfolio": "🏦 Portföy",
-        "btn_limit": "📌 Limit Emir",
-        "btn_settings": "⚙️ Ayarlar",
-        "btn_language": "🌐 Dil",
-        "btn_refer": "🏆 Davet Et",
-        "btn_help": "📖 Yardım",
-        "btn_back": "⬅️ Menüye Dön",
-        "wallet": "Wallet",
-        "address": "Adres",
-        "balance": "Bakiye",
-        "referral": "Referans",
-        "invite": "Arkadaşlarını davet et ve ödül kazan",
-        "getting_started": "Başlangıç",
-        "send_token": "Başlamak için token kontrat adresi gönder.",
-        "follow": "Güncellemeler ve destek için resmi hesapları takip et.",
-        "solana": "Solana",
-        "unknown_token": "Bilinmeyen Token",
-        "dex": "DEX",
-        "market_cap": "Piyasa Değeri",
-        "price": "Fiyat",
-        "liquidity": "Likidite",
-        "tax": "Vergi",
-        "no_wallet": "Henüz wallet kurmadın",
-        "access_details": "Token detaylarına erişmek için önce wallet içe aktar",
-        "enter_contract": "Lütfen token kontrat adresini gir:",
-        "scan_failed": "Token verileri yüklenemedi.",
-        "step1": "🔐 <b>Wallet İçe Aktar - Adım 1/2</b>\n\nBu wallet için hangi adı kullanmak istersin?\n\nSadece harf ve rakam.\n<i>Örneğin: \"MainWallet\" veya \"Wallet123\".</i>",
-        "invalid_wallet_name": "⚠️ Lütfen sadece harf ve rakam kullan.\nÖrnek: \"MainWallet\" veya \"Wallet123\".",
-        "step2": "🔐 <b>Wallet İçe Aktar - Adım 2/2</b>\n\nWallet import bu test sürümünde devre dışı.\n\n⚠️ <b>Buraya private key veya recovery phrase yazma.</b>\n\nBu ekran sadece wallet import akışı için placeholder.",
-        "import_failed": "❌ Import başarısız!\n\n⚠️ Hata: <i>Wallet import bu test sürümünde devre dışı.</i>",
-        "manage_wallet": "💳 <b>Wallet Yönet</b>\n\nHenüz bağlı wallet yok.\n\nDevam etmek için wallet import et veya oluştur.",
-        "buy_sell": "💰 <b>Al/Sat</b>\n\nLütfen token kontrat adresini gir:",
-        "copy_trading": "👥 <b>Copy Trading</b>\n\nCopy trading henüz aktif değil.\n\nYakında seçili walletları takip edebileceksin.",
-        "portfolio": "🏦 <b>Portföy</b>\n\nWallet: —\nBakiye: —\nTokenlar: —\n\nLütfen önce wallet import et veya bağla.",
-        "limit_order": "📌 <b>Limit Emir</b>\n\nLimit emirler henüz aktif değil.\n\nBu menü sonraki sürüm için hazırlandı.",
-        "settings": "⚙️ <b>Ayarlar</b>\n\nSlippage: —\nGas/Priority Fee: —\nMEV Koruması: —\n\nAyarlar sonraki sürümde eklenecek.",
-        "language_title": "🌐 <b>Dil</b>\n\nDilini seç:",
-        "language_saved": "✅ Dil kaydedildi.",
-        "language_alert": "Dil kaydedildi",
-        "refer_text": "🏆 <b>Davet Et</b>\n\nReferans linkin:\n{link}\n\nArkadaşlarını davet et ve ödül kazan.",
-        "help": "📖 <b>Yardım</b>\n\n1. Solana token kontrat adresi gönder.\n2. Bot token bilgilerini gösterir.\n3. Wallet özellikleri daha sonra eklenecek.\n\nDestek: your-support@email.com",
-        "unknown_feature": "Bu özellik henüz mevcut değil.",
-    },
 }
+
+for code in ["fr", "es", "pt", "tr"]:
+    TRANSLATIONS[code] = TRANSLATIONS["en"].copy()
 
 
 def get_lang(chat_id) -> str:
@@ -352,6 +219,19 @@ def get_lang(chat_id) -> str:
 
 def t(lang: str, key: str) -> str:
     return TRANSLATIONS.get(lang, TRANSLATIONS["en"]).get(key, TRANSLATIONS["en"].get(key, key))
+
+
+def get_chat_settings(chat_id):
+    if chat_id not in USER_SETTINGS:
+        USER_SETTINGS[chat_id] = {
+            "anti_mev": True,
+            "degen_mode": False,
+        }
+    return USER_SETTINGS[chat_id]
+
+
+def dot(value: bool) -> str:
+    return "🟢" if value else "🔴"
 
 
 def get_ref_code(user) -> str:
@@ -371,24 +251,22 @@ def get_ref_link(user) -> str:
 def main_menu_keyboard(lang: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
+            [InlineKeyboardButton(text=t(lang, "btn_start_trading"), callback_data="start_trading")],
             [
+                InlineKeyboardButton(text=t(lang, "btn_wallet"), callback_data="wallet_required"),
                 InlineKeyboardButton(text=t(lang, "btn_import"), callback_data="import_wallet"),
-                InlineKeyboardButton(text=t(lang, "btn_manage"), callback_data="manage_wallet"),
             ],
             [
-                InlineKeyboardButton(text=t(lang, "btn_buy_sell"), callback_data="buy_sell"),
-                InlineKeyboardButton(text=t(lang, "btn_copy"), callback_data="copy_trading"),
-            ],
-            [
-                InlineKeyboardButton(text=t(lang, "btn_portfolio"), callback_data="portfolio"),
+                InlineKeyboardButton(text=t(lang, "btn_portfolio"), callback_data="wallet_required"),
                 InlineKeyboardButton(text=t(lang, "btn_limit"), callback_data="limit_order"),
+            ],
+            [
+                InlineKeyboardButton(text=t(lang, "btn_copy"), callback_data="wallet_required"),
+                InlineKeyboardButton(text=t(lang, "btn_refer"), callback_data="refer"),
             ],
             [
                 InlineKeyboardButton(text=t(lang, "btn_settings"), callback_data="settings"),
                 InlineKeyboardButton(text=t(lang, "btn_language"), callback_data="language"),
-            ],
-            [
-                InlineKeyboardButton(text=t(lang, "btn_refer"), callback_data="refer"),
                 InlineKeyboardButton(text=t(lang, "btn_help"), callback_data="help"),
             ],
         ]
@@ -406,7 +284,58 @@ def back_keyboard(lang: str) -> InlineKeyboardMarkup:
 def import_wallet_keyboard(lang: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text=t(lang, "btn_import"), callback_data="import_wallet")]
+            [InlineKeyboardButton(text="🔐 Import Wallet", callback_data="import_wallet")]
+        ]
+    )
+
+
+def settings_keyboard(lang: str, chat_id) -> InlineKeyboardMarkup:
+    settings = get_chat_settings(chat_id)
+
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=f"{dot(settings['anti_mev'])} {t(lang, 'anti_mev')}",
+                    callback_data="toggle_anti_mev",
+                ),
+                InlineKeyboardButton(
+                    text=f"{dot(settings['degen_mode'])} {t(lang, 'degen_mode')}",
+                    callback_data="toggle_degen_mode",
+                ),
+            ],
+            [
+                InlineKeyboardButton(text=t(lang, "buy"), callback_data="wallet_required"),
+                InlineKeyboardButton(text=t(lang, "sell"), callback_data="wallet_required"),
+            ],
+            [
+                InlineKeyboardButton(
+                    text=f"{t(lang, 'initial_fees')} | 🟢 {t(lang, 'on')}",
+                    callback_data="wallet_required",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=f"{t(lang, 'monitor')} | 🔄 {t(lang, 'detailed')}",
+                    callback_data="wallet_required",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=f"{t(lang, 'wallet_selection')} | 🔄 {t(lang, 'single')}",
+                    callback_data="wallet_required",
+                )
+            ],
+        ]
+    )
+
+
+def limit_orders_keyboard(lang: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=t(lang, "refresh"), callback_data="wallet_required")],
+            [InlineKeyboardButton(text=t(lang, "existing_orders"), callback_data="wallet_required")],
+            [InlineKeyboardButton(text=t(lang, "add_limit_order"), callback_data="wallet_required")],
         ]
     )
 
@@ -451,6 +380,14 @@ async def send_home(message: Message):
         reply_markup=main_menu_keyboard(lang),
         parse_mode="HTML",
         disable_web_page_preview=False,
+    )
+
+
+async def send_wallet_required(message: Message, lang: str):
+    await message.answer(
+        t(lang, "wallet_required"),
+        parse_mode="HTML",
+        reply_markup=import_wallet_keyboard(lang),
     )
 
 
@@ -513,25 +450,40 @@ def choose_best_pair(pairs):
     return max(pairs, key=liquidity_usd)
 
 
+async def fetch_json(url: str):
+    timeout = ClientTimeout(total=10)
+
+    async with ClientSession(timeout=timeout) as session:
+        async with session.get(url, headers={"User-Agent": "TelegramMenuBot/1.0"}) as response:
+            if response.status != 200:
+                return None
+            return await response.json()
+
+
 async def fetch_token_data(address: str):
-    url = f"https://api.dexscreener.com/token-pairs/v1/solana/{address}"
-
     try:
-        timeout = ClientTimeout(total=10)
+        urls = [
+            f"https://api.dexscreener.com/token-pairs/v1/solana/{address}",
+            f"https://api.dexscreener.com/latest/dex/tokens/{address}",
+        ]
 
-        async with ClientSession(timeout=timeout) as session:
-            async with session.get(url, headers={"User-Agent": "TelegramMenuBot/1.0"}) as response:
-                if response.status != 200:
-                    return None
+        all_pairs = []
 
-                data = await response.json()
+        for url in urls:
+            data = await fetch_json(url)
 
-        if not isinstance(data, list) or not data:
+            if isinstance(data, list):
+                all_pairs.extend(data)
+
+            if isinstance(data, dict) and isinstance(data.get("pairs"), list):
+                all_pairs.extend(data.get("pairs"))
+
+        if not all_pairs:
             return None
 
-        pairs = [pair for pair in data if pair.get("chainId") == "solana"]
+        pairs = [pair for pair in all_pairs if pair.get("chainId") == "solana"]
         if not pairs:
-            pairs = data
+            pairs = all_pairs
 
         best_pair = choose_best_pair(pairs)
         if not best_pair:
@@ -540,7 +492,9 @@ async def fetch_token_data(address: str):
         base_token = best_pair.get("baseToken") or {}
         quote_token = best_pair.get("quoteToken") or {}
 
-        if quote_token.get("address") == address:
+        if base_token.get("address") == address:
+            token = base_token
+        elif quote_token.get("address") == address:
             token = quote_token
         else:
             token = base_token
@@ -555,7 +509,6 @@ async def fetch_token_data(address: str):
             "market_cap": market_cap,
             "price": best_pair.get("priceUsd"),
             "liquidity": liquidity,
-            "pair_url": best_pair.get("url"),
         }
 
     except Exception as error:
@@ -581,9 +534,11 @@ def token_card(address: str, lang: str, token_data: dict | None) -> str:
         price = "—"
         liquidity = "—"
 
+    ticker_text = f"${ticker}" if ticker != "—" else "$—"
+
     return (
         f"📌 <b>{t(lang, 'solana')}</b>\n"
-        f"{html.escape(name)} · <b>${html.escape(ticker)}</b>\n"
+        f"{html.escape(name)} · <b>{html.escape(ticker_text)}</b>\n"
         f"<code>{safe_address}</code>\n\n"
         f"🏦 {t(lang, 'dex')}: <b>{html.escape(str(dex))}</b>\n"
         f"📊 {t(lang, 'market_cap')}: <b>{market_cap}</b>\n"
@@ -623,6 +578,77 @@ async def back_to_menu(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     await callback.answer()
     await send_home(callback.message)
+
+
+@dp.callback_query(F.data == "start_trading")
+async def start_trading(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "enter_contract"),
+        reply_markup=back_keyboard(lang),
+    )
+
+
+@dp.callback_query(F.data == "wallet_required")
+async def wallet_required(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await send_wallet_required(callback.message, lang)
+
+
+@dp.callback_query(F.data == "settings")
+async def settings(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "settings_panel"),
+        parse_mode="HTML",
+        reply_markup=settings_keyboard(lang, callback.message.chat.id),
+    )
+
+
+@dp.callback_query(F.data == "toggle_anti_mev")
+async def toggle_anti_mev(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+    settings_data = get_chat_settings(callback.message.chat.id)
+    settings_data["anti_mev"] = not settings_data["anti_mev"]
+
+    await callback.answer()
+    await callback.message.edit_text(
+        t(lang, "settings_panel"),
+        parse_mode="HTML",
+        reply_markup=settings_keyboard(lang, callback.message.chat.id),
+    )
+
+
+@dp.callback_query(F.data == "toggle_degen_mode")
+async def toggle_degen_mode(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+    settings_data = get_chat_settings(callback.message.chat.id)
+    settings_data["degen_mode"] = not settings_data["degen_mode"]
+
+    await callback.answer()
+    await callback.message.edit_text(
+        t(lang, "settings_panel"),
+        parse_mode="HTML",
+        reply_markup=settings_keyboard(lang, callback.message.chat.id),
+    )
+
+
+@dp.callback_query(F.data == "limit_order")
+async def limit_order(callback: CallbackQuery):
+    lang = get_lang(callback.message.chat.id)
+
+    await callback.answer()
+    await callback.message.answer(
+        t(lang, "limit_orders_text"),
+        parse_mode="HTML",
+        reply_markup=limit_orders_keyboard(lang),
+    )
 
 
 @dp.callback_query(F.data == "import_wallet")
@@ -691,78 +717,6 @@ async def text_handler(message: Message):
             t(lang, "enter_contract"),
             reply_markup=back_keyboard(lang),
         )
-
-
-@dp.callback_query(F.data == "manage_wallet")
-async def manage_wallet(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "manage_wallet"),
-        parse_mode="HTML",
-        reply_markup=import_wallet_keyboard(lang),
-    )
-
-
-@dp.callback_query(F.data == "buy_sell")
-async def buy_sell(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "buy_sell"),
-        parse_mode="HTML",
-        reply_markup=back_keyboard(lang),
-    )
-
-
-@dp.callback_query(F.data == "copy_trading")
-async def copy_trading(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "copy_trading"),
-        parse_mode="HTML",
-        reply_markup=back_keyboard(lang),
-    )
-
-
-@dp.callback_query(F.data == "portfolio")
-async def portfolio(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "portfolio"),
-        parse_mode="HTML",
-        reply_markup=import_wallet_keyboard(lang),
-    )
-
-
-@dp.callback_query(F.data == "limit_order")
-async def limit_order(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "limit_order"),
-        parse_mode="HTML",
-        reply_markup=back_keyboard(lang),
-    )
-
-
-@dp.callback_query(F.data == "settings")
-async def settings(callback: CallbackQuery):
-    lang = get_lang(callback.message.chat.id)
-
-    await callback.answer()
-    await callback.message.answer(
-        t(lang, "settings"),
-        parse_mode="HTML",
-        reply_markup=back_keyboard(lang),
-    )
 
 
 @dp.callback_query(F.data == "language")
