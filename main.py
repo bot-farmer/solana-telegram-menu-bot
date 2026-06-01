@@ -50,6 +50,28 @@ class ImportWalletState(StatesGroup):
     waiting_for_secret = State()
 
 
+def get_ref_code(user) -> str:
+    """
+    Erstellt dynamischen Referral-Code:
+    Wenn der Telegram-User einen Username hat:
+    w4_username
+
+    Wenn nicht:
+    w4_id123456789
+    """
+    if user and user.username:
+        username = re.sub(r"[^A-Za-z0-9_]", "", user.username)
+        return f"w4_{username}"
+
+    user_id = user.id if user else "unknown"
+    return f"w4_id{user_id}"
+
+
+def get_ref_link(user) -> str:
+    ref_code = get_ref_code(user)
+    return f"https://t.me/{BOT_USERNAME}?start={ref_code}"
+
+
 def main_menu_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -94,14 +116,14 @@ def import_wallet_keyboard() -> InlineKeyboardMarkup:
 
 
 async def send_home(message: Message):
-    bot_link = f"https://t.me/{BOT_USERNAME}?start=ref_mythosmondays"
+    referral_link = get_ref_link(message.from_user)
 
     text = (
         "💼 <b>Wallet</b>\n"
         "Address: —\n"
         "Balance: — ($—)\n\n"
         "🔗 <b>Referral</b>\n"
-        f"Invite friends and earn rewards: {bot_link}\n\n"
+        f"Invite friends and earn rewards: {referral_link}\n\n"
         "🚀 <b>Getting Started</b>\n"
         "Send a token contract address to begin trading instantly.\n\n"
         "🔔 <i>Follow official accounts for updates and support.</i>"
@@ -220,7 +242,6 @@ async def wallet_name_handler(message: Message, state: FSMContext):
 
 @dp.message(ImportWalletState.waiting_for_secret)
 async def secret_handler(message: Message, state: FSMContext):
-    # Sicherheitsplatzhalter:
     # Der Bot speichert und verarbeitet hier absichtlich keine Private Keys oder Seed Phrases.
     try:
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
@@ -361,11 +382,11 @@ async def choose_language(callback: CallbackQuery):
 async def refer(callback: CallbackQuery):
     await callback.answer()
 
-    bot_link = f"https://t.me/{BOT_USERNAME}?start=ref_mythosmondays"
+    referral_link = get_ref_link(callback.from_user)
 
     await callback.message.answer(
         "🏆 <b>Refer & Earn</b>\n\n"
-        f"Your referral link:\n{bot_link}\n\n"
+        f"Your referral link:\n{referral_link}\n\n"
         "Invite friends and earn rewards.",
         parse_mode="HTML",
         reply_markup=back_keyboard(),
