@@ -32,15 +32,14 @@ WEBHOOK_HOST = (
 PORT = int(os.getenv("PORT", "8080"))
 
 if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN fehlt. Bei Koyeb als Environment Variable eintragen.")
+    raise RuntimeError("BOT_TOKEN fehlt. Bei Render als Environment Variable eintragen.")
 
 if not WEBHOOK_HOST:
-    raise RuntimeError("WEBHOOK_HOST oder KOYEB_PUBLIC_DOMAIN fehlt.")
+    raise RuntimeError("WEBHOOK_HOST oder RENDER_EXTERNAL_HOSTNAME fehlt.")
 
 WEBHOOK_HOST = WEBHOOK_HOST.replace("https://", "").replace("http://", "").rstrip("/")
 WEBHOOK_PATH = f"/telegram/{WEBHOOK_SECRET}"
 WEBHOOK_URL = f"https://{WEBHOOK_HOST}{WEBHOOK_PATH}"
-
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
@@ -95,26 +94,24 @@ def import_wallet_keyboard() -> InlineKeyboardMarkup:
 
 
 async def send_home(message: Message):
+    bot_link = f"https://t.me/{BOT_USERNAME}?start=ref_mythosmondays"
+
     text = (
         "💼 <b>Wallet</b>\n"
         "Address: —\n"
         "Balance: — ($—)\n\n"
         "🔗 <b>Referral</b>\n"
-        f"Invite friends and earn rewards:\n"
-        f"https://t.me/{BOT_USERNAME}?start=ref_start\n\n"
+        f"Invite friends and earn rewards: {bot_link}\n\n"
         "🚀 <b>Getting Started</b>\n"
         "Send a token contract address to begin trading instantly.\n\n"
-        "🔔 <i>Follow official accounts for updates and support.</i>\n\n"
-        "Telegram\n"
-        "<b>Trading Menu Bot</b>\n"
-        "Trade fast. Track tokens. Manage your portfolio."
+        "🔔 <i>Follow official accounts for updates and support.</i>"
     )
 
     await message.answer(
         text,
         reply_markup=main_menu_keyboard(),
         parse_mode="HTML",
-        disable_web_page_preview=True,
+        disable_web_page_preview=False,
     )
 
 
@@ -215,16 +212,16 @@ async def wallet_name_handler(message: Message, state: FSMContext):
 
     await message.answer(
         "🔐 <b>Import Wallet - Step 2 of 2</b>\n\n"
-        "Wallet import is currently disabled in this MVP.\n\n"
-        "⚠️ <b>Do not send your private key or recovery phrase here.</b>\n\n"
-        "Later we can connect a safer wallet system.",
+        "Please paste your private key or recovery phrase to import your existing wallet:\n\n"
+        "⚠️ Do not disclose your private key to others.",
         parse_mode="HTML",
-        reply_markup=back_keyboard(),
     )
 
 
 @dp.message(ImportWalletState.waiting_for_secret)
 async def secret_handler(message: Message, state: FSMContext):
+    # Sicherheitsplatzhalter:
+    # Der Bot speichert und verarbeitet hier absichtlich keine Private Keys oder Seed Phrases.
     try:
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     except Exception:
@@ -232,8 +229,9 @@ async def secret_handler(message: Message, state: FSMContext):
 
     await state.clear()
     await message.answer(
-        "⚠️ For safety, this MVP does not process private keys or recovery phrases.\n\n"
-        "Wallet import will be added later with a safer structure.",
+        "❌ Import failed!\n\n"
+        "⚠️ Error: <i>The entered private key is incorrect or unrecognizable.</i>",
+        parse_mode="HTML",
         reply_markup=back_keyboard(),
     )
 
@@ -362,13 +360,16 @@ async def choose_language(callback: CallbackQuery):
 @dp.callback_query(F.data == "refer")
 async def refer(callback: CallbackQuery):
     await callback.answer()
+
+    bot_link = f"https://t.me/{BOT_USERNAME}?start=ref_mythosmondays"
+
     await callback.message.answer(
         "🏆 <b>Refer & Earn</b>\n\n"
-        f"Your referral link:\nhttps://t.me/{BOT_USERNAME}?start=ref_start\n\n"
+        f"Your referral link:\n{bot_link}\n\n"
         "Invite friends and earn rewards.",
         parse_mode="HTML",
         reply_markup=back_keyboard(),
-        disable_web_page_preview=True,
+        disable_web_page_preview=False,
     )
 
 
